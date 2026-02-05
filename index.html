@@ -1,0 +1,302 @@
+<!DOCTYPE html data-theme="light">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <title>Task</title>
+</head>
+
+<body>
+    <!-- nav section -->
+    <header class="navbar-container">
+        <nav class="navbar-pill">
+            <div><img src="/picture's/Copy of PROFUNK MEDIA GROUP 1.png" alt="" srcset=""></div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="#">About</a>
+                <a href="#" class="contact-btn">Contact</a>
+            </div>
+        </nav>
+    </header>
+    <!-- Banner section -->
+    <section class="hero">
+        <div class="grid-overlay"></div>
+
+        <div class="hero-content">
+            <span style="font-size: 50px;">Sound Stories</span>
+            <p>Over 160,000 stunning sound effects (SFX) and over 650 royalty<br>
+                free music tracks free for commercial and non commercial use.</p>
+
+            <button class="btn-explore">Explore <img src="/picture's/Vector.png" alt="" srcset=""> </button>
+        </div>
+    </section>
+
+
+    <!-- audio card section -->
+    <section style="background-color: black;">
+        <section class="card-section">
+            <div class="sound-heading">
+
+                <div class="sound-title">
+                    Latest Sound Effects
+                </div>
+
+                <div class="sound-right">
+
+                    <p class="sound-text">
+                        Browse professional sound effects recorded by the best in the business.
+                    </p>
+
+                    <div class="sound-buttons">
+
+                        <button class="btn-light">Sound Effects</button>
+
+                        <button class="btn-light">
+                            <img src="/picture's/preference-vertical.png" alt="">
+                        </button>
+
+                        <button class="btn-dark">All Sound Effect</button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="cards" id="cards"></div>
+
+            <div class="modal hidden" id="modal">
+                <div class="modal-box">
+                    <h3 id="mTitle"></h3>
+                    <p id="mText"></p>
+                    <button id="close">Close</button>
+                </div>
+            </div>
+        </section>
+    </section>
+
+
+
+
+    <!-- stay section -->
+
+    <section style="padding: 20%; display: flex;  justify-content: center; ">
+        <img style="width:150%;" src="/picture's/Frame 2147228529.png" alt="" srcset="">
+    </section>
+    <!--Java script -->
+    <script>
+
+
+        const sounds = [];
+
+        for (let i = 1; i <= 12; i++) {
+            sounds.push({
+                title: "Wood, twig snap in forest, stereo, weaker, smaller",
+                info: "High quality forest sound. Recorded in stereo.",
+                file: "audio1.mp3"
+            });
+        }
+
+
+        const cards = document.getElementById("cards");
+
+        let currentAudio = null;
+        let currentBtn = null;
+
+
+
+        sounds.forEach(item => {
+
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+
+  <div class="header">
+    <div class="logo"> <image src="/picture's/audio.png"> </div>
+    <div class="title">${item.title}</div>
+  </div>
+
+  <div class="player">
+
+    <button class="play">▶</button>
+
+    <div class="wave">
+      ${"<span></span>".repeat(25)}
+    </div>
+
+    <div class="right">
+      <span class="time">00:00</span>
+      <span class="volume">🔊</span>
+    </div>
+
+  </div>
+
+  <div class="footer">
+
+    <button class="download"> <image src="/picture's/download-04.png"> </button>
+    <button><image src="/picture's/Frame (2).png"> </button>
+    <button class="info"><image src="/picture's/information-circle (1).png"> </button>
+
+  </div>
+
+  <audio src="${item.file}"></audio>
+
+  `;
+
+            cards.appendChild(card);
+
+            setup(card, item);
+
+        });
+
+
+        function setup(card, item) {
+
+            const audio = card.querySelector("audio");
+            const play = card.querySelector(".play");
+            const time = card.querySelector(".time");
+            const download = card.querySelector(".download");
+            const info = card.querySelector(".info");
+            const waveBars = card.querySelectorAll(".wave span");
+
+
+
+            play.onclick = () => {
+
+                if (currentAudio && currentAudio !== audio) {
+                    currentAudio.pause();
+                    currentBtn.textContent = "▶";
+                }
+
+                if (audio.paused) {
+
+                    audio.play();
+                    play.textContent = "❚❚";
+
+                    currentAudio = audio;
+                    currentBtn = play;
+
+                    animateWave(waveBars, true);
+
+                } else {
+
+                    audio.pause();
+                    play.textContent = "▶";
+
+                    animateWave(waveBars, false);
+                }
+
+            };
+
+
+
+            audio.ontimeupdate = () => {
+
+                time.textContent = format(audio.currentTime);
+
+            };
+
+
+
+            audio.onended = () => {
+
+                play.textContent = "▶";
+                animateWave(waveBars, false);
+
+            };
+
+
+
+            download.onclick = () => {
+
+                const a = document.createElement("a");
+                a.href = audio.src;
+                a.download = "sound.mp3";
+                a.click();
+
+            };
+
+
+
+            info.onclick = () => {
+
+                openModal(item.title, item.info);
+
+            };
+
+        }
+
+
+
+        function animateWave(bars, on) {
+
+            bars.forEach((bar, i) => {
+
+                if (on) {
+
+                    bar.style.animation =
+                        `wave 1s ${i * 0.05}s infinite ease-in-out`;
+
+                } else {
+
+                    bar.style.animation = "none";
+                    bar.style.height = "10px";
+                }
+
+            });
+
+        }
+
+
+
+        const style = document.createElement("style");
+        style.innerHTML = `
+@keyframes wave{
+  0%,100%{height:6px}
+  50%{height:18px}
+}
+`;
+        document.head.appendChild(style);
+
+
+
+        const modal = document.getElementById("modal");
+        const mTitle = document.getElementById("mTitle");
+        const mText = document.getElementById("mText");
+        const close = document.getElementById("close");
+
+        function openModal(t, d) {
+
+            mTitle.textContent = t;
+            mText.textContent = d;
+
+            modal.classList.remove("hidden");
+        }
+
+        close.onclick = () => {
+            modal.classList.add("hidden");
+        };
+
+
+
+        function format(sec) {
+
+            if (isNaN(sec)) return "00:00";
+
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+
+            return m.toString().padStart(2, "0") + ":" +
+                s.toString().padStart(2, "0");
+        }
+
+    </script>
+
+</body>
+
+</html>
